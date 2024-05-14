@@ -32,7 +32,9 @@ export class OASErrorHandler extends OASBase {
       }
 
       /* Handle errors */
-      if (err.name === "RequestValidationError") {
+      if (config.customHandler) {
+        config.customHandler(err, sendErr);
+      } else if (err.name === "RequestValidationError") {
         if ((/[\S\s]* content-type is not accepted [\S\s]*/).test(err.message)) {
           sendErr(406);
         } else {
@@ -42,8 +44,6 @@ export class OASErrorHandler extends OASBase {
         sendErr(401);
       } else if (err.name === "AuthError") {
         sendErr(403);
-      } else if (config.customHandler) {
-        config.customHandler(err, sendErr);
       }
 
       /* Catch unhandled errors */
